@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+    <head>
+        <title>remote socket listener</title>
+        <link href="style.css" rel="stylesheet">
+    </head>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="lodash.min.js"></script>
+    <script>
+     var socket = io.connect("169.254.149.56:3000");
+    </script>
+
+    <body>
+
+    </body>
+
+    <script src="renderer.js" type="text/javascript"></script>
+</html>

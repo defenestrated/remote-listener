@@ -1,0 +1,20 @@
+{
+  "name": "remote-listener",
+  "version": "1.0.0",
+  "description": "for listening to remote sensors via websocket",
+  "main": "main.js",
+  "scripts": {
+    "start": "budo main.js --live --verbose --port 3000 --open",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sam galison",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "lodash": "^4.17.4",
+    "socket.io": "^2.0.4"
+  },
+  "devDependencies": {
+    "budo": "^10.0.4"
+  }
+}
