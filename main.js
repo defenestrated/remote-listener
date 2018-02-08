@@ -2,7 +2,7 @@ var _ = require('lodash'); // utility
 // var $ = require('zepto');
 
 window.app = {
-  threshhold: 0.5,
+  threshhold: 0.8,
   sensordata: {
     current: [],
     previous: [],
@@ -58,7 +58,7 @@ socket.on("reading", function(data) {
   // console.log(reading)
 
 
-  if (c > 3) checklift(c)
+  checklift(c)
   app.sensordata = a
 })
 
@@ -70,11 +70,11 @@ function checklift(ch) {
   var a = app.sensordata
   if (a.current[ch].calibrated > app.threshhold && a.previous[ch].calibrated < app.threshhold) {
     console.log(ch + " lifted")
-    playmedia(ch-4)
+    playmedia(ch)
   }
 
   else if (a.current[ch].calibrated < app.threshhold) {
-    stopmedia(ch-4)
+    stopmedia(ch)
   }
 
 
@@ -88,7 +88,9 @@ function hi() {
 var playmedia = _.debounce(function(c) {
   console.log("PLAY MEDIA #" + c)
 
-  _(4).times(function(n) {
+  var count = $(".videowrapper").children().length
+
+  _(count).times(function(n) {
     stopmedia(n)
   })
   // stopmedia()
