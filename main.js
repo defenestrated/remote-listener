@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $(".content").addClass("production")
   }
 
-  // if (typeof socket !== "undefined")
+  if (typeof socket !== "undefined")
     socket.on("setup", function(data) {
       console.log("socket connected!", data)
 
@@ -48,42 +48,42 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 
-// if (typeof socket !== "undefined")
+if (typeof socket !== "undefined")
   socket.on("reading", function(data) {
-  var a = app.sensordata
-  var c = data.chnum
+    var a = app.sensordata
+    var c = data.chnum
 
-  a.current[c] = data.reading
-  setleast(data)
-  setmost(data)
+    a.current[c] = data.reading
+    setleast(data)
+    setmost(data)
 
 
-  a.current[c].calibrated = (data.reading.value - a.mins[c]) / (a.maxs[c] - a.mins[c])
-  // console.log(_.map(app.sensordata.mins, i => _.round(i, 3)))
-  // console.log(_.map(app.sensordata.maxs, i => _.round(i, 3)))
-  // console.log(app.sensordata.maxs)
+    a.current[c].calibrated = (data.reading.value - a.mins[c]) / (a.maxs[c] - a.mins[c])
+    // console.log(_.map(app.sensordata.mins, i => _.round(i, 3)))
+    // console.log(_.map(app.sensordata.maxs, i => _.round(i, 3)))
+    // console.log(app.sensordata.maxs)
 
-  if (productionmode === false) {
+    if (productionmode === false) {
 
-    var box = document.querySelector(".reading-display#reading" + c)
+      var box = document.querySelector(".reading-display#reading" + c)
 
-    box.children[0].innerHTML = "raw: <span class='value'>" + r(data.reading.rawValue) + "</span>"
-    box.children[1].innerHTML = "0-1: <span class='value'>" + r(data.reading.value) + "</span>"
-    box.children[2].innerHTML = "manually calibrated: <span class='value'>" + r(data.manual_calibrated) + "</span>"
-    box.children[3].innerHTML = "auto calibrated:     <span class='value'>" + r(a.current[c].calibrated) + "</span>"
+      box.children[0].innerHTML = "raw: <span class='value'>" + r(data.reading.rawValue) + "</span>"
+      box.children[1].innerHTML = "0-1: <span class='value'>" + r(data.reading.value) + "</span>"
+      box.children[2].innerHTML = "manually calibrated: <span class='value'>" + r(data.manual_calibrated) + "</span>"
+      box.children[3].innerHTML = "auto calibrated:     <span class='value'>" + r(a.current[c].calibrated) + "</span>"
 
-    if (a.current[c].calibrated < app.threshhold) {
-      box.setAttribute("style","background-color: rgba(255,0,0,"+ (1-data.manual_calibrated) + ")")
+      if (a.current[c].calibrated < app.threshhold) {
+        box.setAttribute("style","background-color: rgba(255,0,0,"+ (1-data.manual_calibrated) + ")")
+      }
+      else box.setAttribute("style","background-color: rgba(255,255,255," + data.manual_calibrated + ")")
+      // console.log(reading)
+
     }
-    else box.setAttribute("style","background-color: rgba(255,255,255," + data.manual_calibrated + ")")
-    // console.log(reading)
-
-  }
 
 
-  checklift(c)
-  app.sensordata = a
-})
+    checklift(c)
+    app.sensordata = a
+  })
 
 function r(i) {
   return _.round(i, 3)
