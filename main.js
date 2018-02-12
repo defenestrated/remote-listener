@@ -2,19 +2,19 @@ var _ = require('lodash'); // utility
 // var $ = require('zepto');
 
 window.app = {
-  threshhold: 0.8,
+  threshholds: [0.5, 0.5, 0.5, 0.5],
   sensordata: {
     current: [],
     previous: [],
-    mins: [],
-    maxs: []
+    mins: [0, 0, 0, 0],
+    maxs: [1, 1, 1, 1]
   }
 }
 
 console.log(app)
 
 var productionmode = true;
-
+var autocalibrate = true;
 
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -54,9 +54,10 @@ if (typeof socket !== "undefined")
     var c = data.chnum
 
     a.current[c] = data.reading
-    setleast(data)
-    setmost(data)
-
+    if (autocalibrate === true) {
+      setleast(data)
+      setmost(data)
+    }
 
     a.current[c].calibrated = (data.reading.value - a.mins[c]) / (a.maxs[c] - a.mins[c])
     // console.log(_.map(app.sensordata.mins, i => _.round(i, 3)))
@@ -72,7 +73,7 @@ if (typeof socket !== "undefined")
       box.children[2].innerHTML = "manually calibrated: <span class='value'>" + r(data.manual_calibrated) + "</span>"
       box.children[3].innerHTML = "auto calibrated:     <span class='value'>" + r(a.current[c].calibrated) + "</span>"
 
-      if (a.current[c].calibrated < app.threshhold) {
+      if (a.current[c].calibrated < app.threshholds[c]) {
         box.setAttribute("style","background-color: rgba(255,0,0,"+ (1-data.manual_calibrated) + ")")
       }
       else box.setAttribute("style","background-color: rgba(255,255,255," + data.manual_calibrated + ")")
@@ -91,12 +92,12 @@ function r(i) {
 
 function checklift(ch) {
   var a = app.sensordata
-  if (a.current[ch].calibrated > app.threshhold && a.previous[ch].calibrated < app.threshhold) {
+  if (a.current[ch].calibrated > app.threshholds[ch] && a.previous[ch].calibrated < app.threshholds[ch]) {
     console.log(ch + " lifted")
     playmedia(ch)
   }
 
-  else if (a.current[ch].calibrated < app.threshhold) {
+  else if (a.current[ch].calibrated < app.threshholds[ch]) {
     stopmedia(ch)
   }
 
