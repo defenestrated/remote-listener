@@ -117,7 +117,7 @@ function stopmedia(ch) {
   if (all.length != 0) {
     var el = all[ch]
     all[ch].pause()
-    all[ch].fastSeek(0)
+    all[ch].currentTime = 0
 
     $(el).css({
       "opacity": 0
