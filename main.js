@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     $(".content").addClass("production")
   }
 
-  if (typeof socket !== "undefined")
+  // if (typeof socket !== "undefined")
     socket.on("setup", function(data) {
       console.log("socket connected!", data)
 
@@ -48,7 +48,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 
-if (typeof socket !== "undefined") socket.on("reading", function(data) {
+// if (typeof socket !== "undefined")
+  socket.on("reading", function(data) {
   var a = app.sensordata
   var c = data.chnum
 
