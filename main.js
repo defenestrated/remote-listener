@@ -6,32 +6,34 @@ window.app = {
   sensordata: {
     current: [],
     previous: [],
-    mins: [0, 0, 0, 0],
-    maxs: [1, 1, 1, 1]
+    mins: [0.001, 0.03, 0.001, 0.1],
+    maxs: [0.3, 0.3, 0.3, 0.3]
+  },
+  settings: {
+    productionmode: true,
+    autocalibrate: false,
+    verbose: false,
+    debouncetime: 100
   }
 }
 
 console.log(app)
 
-var productionmode = true;
-var autocalibrate = true;
-
-
 document.addEventListener("DOMContentLoaded", function(event) {
 
 
-  console.log("DOM fully loaded and parsed");
+  if (app.settings.verbose) console.log("DOM fully loaded and parsed");
 
-  if (productionmode === true) {
+  if (app.settings.productionmode === true) {
     $(".readings").addClass("invisible")
     $(".content").addClass("production")
   }
 
-  if (typeof socket !== "undefined")
+  // if (typeof socket !== "undefined")
     socket.on("setup", function(data) {
       console.log("socket connected!", data)
 
-      if (productionmode === false) {
+      if (app.settings.productionmode === false) {
         _(data.openchannels).times(i => {
           var wrapper = document.createElement("div")
           wrapper.classList.add("reading-display")
@@ -47,14 +49,18 @@ document.addEventListener("DOMContentLoaded", function(event) {
     })
 });
 
+var spitup = _.throttle(function(a) {
+      console.log(a)
+}, 250)
 
-if (typeof socket !== "undefined")
+// if (typeof socket !== "undefined")
   socket.on("reading", function(data) {
     var a = app.sensordata
     var c = data.chnum
 
     a.current[c] = data.reading
-    if (autocalibrate === true) {
+
+    if (app.settings.autocalibrate === true) {
       setleast(data)
       setmost(data)
     }
@@ -64,7 +70,7 @@ if (typeof socket !== "undefined")
     // console.log(_.map(app.sensordata.maxs, i => _.round(i, 3)))
     // console.log(app.sensordata.maxs)
 
-    if (productionmode === false) {
+    if (app.settings.productionmode === false) {
 
       var box = document.querySelector(".reading-display#reading" + c)
 
@@ -84,6 +90,7 @@ if (typeof socket !== "undefined")
 
     checklift(c)
     app.sensordata = a
+    if (app.settings.verbose) spitup(_.flatMap(a.current, x => (x) ? r(x.value) : 0))
   })
 
 function r(i) {
@@ -110,7 +117,7 @@ function hi() {
 }
 
 var playmedia = _.debounce(function(c) {
-  console.log("PLAY MEDIA #" + c)
+  if (app.settings.verbose) console.log("PLAY MEDIA #" + c)
 
   var count = $(".videowrapper").children().length
 
@@ -122,7 +129,7 @@ var playmedia = _.debounce(function(c) {
     // stopmedia()
 
     var which = $(".videowrapper").children()[c];
-    console.log(which)
+    if (app.settings.verbose) console.log(which)
 
     which.play();
 
@@ -132,7 +139,7 @@ var playmedia = _.debounce(function(c) {
   }
 
 
-}, 500)
+}, app.settings.debouncetime)
 
 
 function stopmedia(ch) {
