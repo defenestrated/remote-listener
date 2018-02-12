@@ -90,19 +90,22 @@ var playmedia = _.debounce(function(c) {
 
   var count = $(".videowrapper").children().length
 
-  _(count).times(function(n) {
-    stopmedia(n)
-  })
-  // stopmedia()
+  if (count != 0) {
 
-  var which = $(".videowrapper").children()[c];
-  console.log(which)
+    _(count).times(function(n) {
+      stopmedia(n)
+    })
+    // stopmedia()
 
-  which.play();
+    var which = $(".videowrapper").children()[c];
+    console.log(which)
 
-  $(which).css({
-    "opacity": 1
-  })
+    which.play();
+
+    $(which).css({
+      "opacity": 1
+    })
+  }
 
 
 }, 500)
@@ -111,13 +114,15 @@ var playmedia = _.debounce(function(c) {
 function stopmedia(ch) {
   var all = $(".videowrapper").children()
 
-  var el = all[ch]
-  all[ch].pause()
-  all[ch].fastSeek(0)
+  if (all.length != 0) {
+    var el = all[ch]
+    all[ch].pause()
+    all[ch].fastSeek(0)
 
-  $(el).css({
-    "opacity": 0
-  })
+    $(el).css({
+      "opacity": 0
+    })
+  }
 }
 
 function setleast(d) {
