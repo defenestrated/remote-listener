@@ -6,6 +6,8 @@ body {
 
 .readings {
   width: 40vw;
+  min-height: 10vh;
+  background: rgb(80,80,80);
 }
 
 .reading-display {
@@ -23,8 +25,10 @@ body {
 .content {
   position: absolute;
   width: 60vw;
+  min-height: 10vh;
   left: 40vw;
   top: 0px;
+  background: rgb(200,200,200);
 }
 
 .videowrapper {
@@ -38,4 +42,18 @@ body {
   left: 0;
   width: 100%;
   opacity: 0;
+}
+
+
+.invisible {
+  display: none;
+}
+
+
+.content.production {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

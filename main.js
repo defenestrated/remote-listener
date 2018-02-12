@@ -13,24 +13,42 @@ window.app = {
 
 console.log(app)
 
-socket.on("setup", function(data) {
-  console.log("socket connected!", data)
+var productionmode = true;
 
-  _(data.openchannels).times(i => {
-    var wrapper = document.createElement("div")
-    wrapper.classList.add("reading-display")
-    wrapper.id = "reading" + i
-    _(4).times(i => {
-      var dp = document.createElement("div")
-      dp.classList.add("data-point")
-      wrapper.append(dp)
+
+
+document.addEventListener("DOMContentLoaded", function(event) {
+
+
+  console.log("DOM fully loaded and parsed");
+
+  if (productionmode === true) {
+    $(".readings").addClass("invisible")
+    $(".content").addClass("production")
+  }
+
+  if (typeof socket !== "undefined")
+    socket.on("setup", function(data) {
+      console.log("socket connected!", data)
+
+      if (productionmode === false) {
+        _(data.openchannels).times(i => {
+          var wrapper = document.createElement("div")
+          wrapper.classList.add("reading-display")
+          wrapper.id = "reading" + i
+          _(4).times(i => {
+            var dp = document.createElement("div")
+            dp.classList.add("data-point")
+            wrapper.append(dp)
+          })
+          $(".readings").append(wrapper)
+        })
+      }
     })
-    document.querySelector(".readings").append(wrapper)
-  })
-})
+});
 
 
-socket.on("reading", function(data) {
+if (typeof socket !== "undefined") socket.on("reading", function(data) {
   var a = app.sensordata
   var c = data.chnum
 
@@ -44,18 +62,22 @@ socket.on("reading", function(data) {
   // console.log(_.map(app.sensordata.maxs, i => _.round(i, 3)))
   // console.log(app.sensordata.maxs)
 
-  var box = document.querySelector(".reading-display#reading" + c)
+  if (productionmode === false) {
 
-  box.children[0].innerHTML = "raw: <span class='value'>" + r(data.reading.rawValue) + "</span>"
-  box.children[1].innerHTML = "0-1: <span class='value'>" + r(data.reading.value) + "</span>"
-  box.children[2].innerHTML = "manually calibrated: <span class='value'>" + r(data.manual_calibrated) + "</span>"
-  box.children[3].innerHTML = "auto calibrated:     <span class='value'>" + r(a.current[c].calibrated) + "</span>"
+    var box = document.querySelector(".reading-display#reading" + c)
 
-  if (a.current[c].calibrated < app.threshhold) {
-    box.setAttribute("style","background-color: rgba(255,0,0,"+ (1-data.manual_calibrated) + ")")
+    box.children[0].innerHTML = "raw: <span class='value'>" + r(data.reading.rawValue) + "</span>"
+    box.children[1].innerHTML = "0-1: <span class='value'>" + r(data.reading.value) + "</span>"
+    box.children[2].innerHTML = "manually calibrated: <span class='value'>" + r(data.manual_calibrated) + "</span>"
+    box.children[3].innerHTML = "auto calibrated:     <span class='value'>" + r(a.current[c].calibrated) + "</span>"
+
+    if (a.current[c].calibrated < app.threshhold) {
+      box.setAttribute("style","background-color: rgba(255,0,0,"+ (1-data.manual_calibrated) + ")")
+    }
+    else box.setAttribute("style","background-color: rgba(255,255,255," + data.manual_calibrated + ")")
+    // console.log(reading)
+
   }
-  else box.setAttribute("style","background-color: rgba(255,255,255," + data.manual_calibrated + ")")
-  // console.log(reading)
 
 
   checklift(c)
